@@ -1,0 +1,8 @@
+{
+    "name": "CraftAll",
+    "version_number": "0.0.2",
+    "website_url": "https://github.com/fiote/valheim-craftall",
+    "description": "Allows you to keep crafting the same item without clicking every time.",
+    "dependencies": [
+    ]
+}
