@@ -18,7 +18,7 @@ using UnityEngine.UI;
  */
 
 namespace CraftAll {
-	[BepInPlugin("fiote.mods.craftall", "CraftAll", "0.0.2")]
+	[BepInPlugin("fiote.mods.craftall", "CraftAll", "0.0.4")]
 
 	public class CraftAll : BaseUnityPlugin {
 
