@@ -2,7 +2,9 @@
 using BepInEx.Logging;
 using CraftAll.Patches;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +26,7 @@ namespace CraftAll {
 
 		public static GameObject goCraftAll;
 		public static Button btnCraftAll;
-		public static Text txtCraftAll;
+		public static TMP_Text txtCraftAll;
 		public static bool isCraftingAll;
 
 		private void Awake() {
@@ -63,10 +65,8 @@ namespace CraftAll {
 			btnCraftAll.interactable = true;
 			btnCraftAll.onClick.AddListener(OnClickCraftAllButton);
 
-			txtCraftAll = goCraftAll.GetComponentInChildren<Text>();
+			txtCraftAll = goCraftAll.GetComponentInChildren<TMP_Text>();
 			txtCraftAll.text = "Craft All";
-			txtCraftAll.resizeTextForBestFit = false;
-			txtCraftAll.fontSize = 20;
 
 			goCraftAll.GetComponent<UITooltip>().m_text = "";
 		}
