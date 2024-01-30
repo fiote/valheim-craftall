@@ -2,7 +2,9 @@
 using BepInEx.Logging;
 using CraftAll.Patches;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +18,7 @@ using UnityEngine.UI;
  */
 
 namespace CraftAll {
-	[BepInPlugin("fiote.mods.craftall", "CraftAll", "0.0.2")]
+	[BepInPlugin("fiote.mods.craftall", "CraftAll", "0.0.4")]
 
 	public class CraftAll : BaseUnityPlugin {
 
@@ -24,7 +26,7 @@ namespace CraftAll {
 
 		public static GameObject goCraftAll;
 		public static Button btnCraftAll;
-		public static Text txtCraftAll;
+		public static TMP_Text txtCraftAll;
 		public static bool isCraftingAll;
 
 		private void Awake() {
@@ -34,7 +36,12 @@ namespace CraftAll {
 
 		public static void CreateCraftAllButton() {
 			Debug($"CreateCraftAllButton()");
-			var craftButton = InventoryGui.instance?.m_craftButton?.gameObject;
+			var gui = InventoryGui.instance;
+			if (gui == null) return;
+			var traverse = Traverse.Create(gui);
+			var craftButtonB = traverse.Field("m_craftButton").GetValue<Button>();
+			if (craftButtonB == null) return;
+			var craftButton = craftButtonB?.gameObject;
 			if (craftButton == null) return;
 
 			if (goCraftAll != null) Destroy(goCraftAll);
@@ -58,10 +65,8 @@ namespace CraftAll {
 			btnCraftAll.interactable = true;
 			btnCraftAll.onClick.AddListener(OnClickCraftAllButton);
 
-			txtCraftAll = goCraftAll.GetComponentInChildren<Text>();
+			txtCraftAll = goCraftAll.GetComponentInChildren<TMP_Text>();
 			txtCraftAll.text = "Craft All";
-			txtCraftAll.resizeTextForBestFit = false;
-			txtCraftAll.fontSize = 20;
 
 			goCraftAll.GetComponent<UITooltip>().m_text = "";
 		}
@@ -80,14 +85,21 @@ namespace CraftAll {
 			Debug($"StartCraftingAll()");
 			isCraftingAll = true;
 			txtCraftAll.text = "Stop Crafting";
-			InventoryGui.instance.OnCraftPressed();
+			var gui = InventoryGui.instance;
+			var traverse = Traverse.Create(gui);
+			traverse.Method("OnCraftPressed").GetValue();
 		}
 
 		public static void StopCraftingAll(bool triggerCancel) {
 			Debug($"StopCraftingAll({triggerCancel})");
 			isCraftingAll = false;
 			if (txtCraftAll != null) txtCraftAll.text = "Craft All";
-			if (triggerCancel) InventoryGui.instance.OnCraftCancelPressed();
+			if (triggerCancel)
+			{
+				var gui = InventoryGui.instance;
+				var traverse = Traverse.Create(gui);
+				traverse.Method("OnCraftCancelPressed").GetValue();
+			}
 		}
 
 		public static void TryCraftingMore() {
@@ -95,10 +107,13 @@ namespace CraftAll {
 			Debug($"isCraftingAll={isCraftingAll}");
 			if (!isCraftingAll) return;
 			var gui = InventoryGui.instance;
-			Debug($"m_selectedRecipe={gui.m_selectedRecipe.Key}");
-			Debug($"m_selectedVariant={gui.m_selectedVariant}");
-			Debug($"m_craftRecipe.m_craftingStation={gui.m_selectedRecipe.Key?.m_craftingStation}");
-			gui.OnCraftPressed();
+			var traverse = Traverse.Create(gui);
+			var selectedRecipe = traverse.Field("m_selectedRecipe").GetValue<KeyValuePair<Recipe, ItemDrop.ItemData>>();
+			var selectedVariant = traverse.Field("m_selectedVariant").GetValue<int>();
+			Debug($"m_selectedRecipe={selectedRecipe.Key}");
+			Debug($"m_selectedVariant={selectedVariant}");
+			Debug($"m_craftRecipe.m_craftingStation={selectedRecipe.Key?.m_craftingStation}");
+			traverse.Method("OnCraftPressed").GetValue();
 		}
 
 		#region LOG
