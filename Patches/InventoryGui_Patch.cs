@@ -10,6 +10,7 @@ using UnityEngine.UI;
 namespace CraftAll.Patches {
 
 	public static class InventoryGui_Helper {
+		public static bool isVisible = false;
 		public static bool justCrafted;
 	}
 
@@ -26,6 +27,7 @@ namespace CraftAll.Patches {
 	public static class InventoryGui_Show_Patch {
 		public static void Prefix(InventoryGui __instance, Container container) {
 			CraftAll.Debug("[Prefix] InventoryGui.Show()");
+			InventoryGui_Helper.isVisible = true;
 			CraftAll.StopCraftingAll(true);
 		}
 	}
@@ -34,7 +36,9 @@ namespace CraftAll.Patches {
 	[HarmonyPatch(typeof(InventoryGui), "Hide")]
 	public static class InventoryGui_Hide_Patch {
 		public static void Prefix(InventoryGui __instance) {
+			if (!InventoryGui_Helper.isVisible) return;
 			CraftAll.Debug("[Prefix] InventoryGui.Hide()");
+			InventoryGui_Helper.isVisible = false;
 			CraftAll.StopCraftingAll(true);
 		}
 	}
@@ -76,6 +80,13 @@ namespace CraftAll.Patches {
 	public static class InventoryGui_OnCraftCancelPressed_Patch {
 		public static void Prefix(InventoryGui __instance) {
 			CraftAll.Debug("[Prefix] InventoryGui.OnCraftCancelPressed()");
+			if (CraftAll.isCraftingAll) {
+				System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+				if (t.ToString().Contains("EpicLoot.Crafting.TabController.OnInventoryChanged")) {
+					CraftAll.Debug("-> not a real cancelPress. Ignoring...");
+					return;
+				}
+			}
 			CraftAll.StopCraftingAll(false);
 		}
 	}
