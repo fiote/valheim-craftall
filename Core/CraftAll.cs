@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using CraftAll.Patches;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -109,7 +110,9 @@ namespace CraftAll {
 			Debug($"isCraftingAll is now TRUE");
 			isCraftingAll = true;
 			txtCraftAll.text = "Stop Crafting";
-			InventoryGui.instance.OnCraftPressed();
+			var gui = InventoryGui.instance;
+			var traverse = Traverse.Create(gui);
+			traverse.Method("OnCraftPressed").GetValue();
 		}
 
 		public static void StopCraftingAll(bool triggerCancel) {
@@ -131,10 +134,13 @@ namespace CraftAll {
 				return;
 			}
 			var gui = InventoryGui.instance;
-			Debug($"m_selectedRecipe={gui.m_selectedRecipe.Key}");
-			Debug($"m_selectedVariant={gui.m_selectedVariant}");
-			Debug($"m_craftRecipe.m_craftingStation={gui.m_selectedRecipe.Key?.m_craftingStation}");
-			gui.OnCraftPressed();
+			var traverse = Traverse.Create(gui);
+			var selectedRecipe = traverse.Field("m_selectedRecipe").GetValue<KeyValuePair<Recipe, ItemDrop.ItemData>>();
+			var selectedVariant = traverse.Field("m_selectedVariant").GetValue<int>();
+			Debug($"m_selectedRecipe={selectedRecipe.Key}");
+			Debug($"m_selectedVariant={selectedVariant}");
+			Debug($"m_craftRecipe.m_craftingStation={selectedRecipe.Key?.m_craftingStation}");
+			traverse.Method("OnCraftPressed").GetValue();
 		}
 
 		#region LOG

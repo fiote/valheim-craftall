@@ -67,8 +67,11 @@ namespace CraftAll.Patches {
 			InventoryGui_Helper.justCrafted = false;
 
 			CraftAll.Debug("[Postfix] InventoryGui.UpdateRecipe()");
-			var qualityLevel = (__instance.m_craftUpgradeItem == null) ? 1 : (__instance.m_craftUpgradeItem.m_quality + 1);
-			if (player.HaveRequirements(__instance.m_craftRecipe, discover: false, qualityLevel)) {
+			var traverse = Traverse.Create(__instance);
+			var craftUpgradeItem = traverse.Field("m_craftUpgradeItem").GetValue<ItemDrop.ItemData>();
+			var craftRecipe = traverse.Field("m_craftRecipe").GetValue<Recipe>();
+			var qualityLevel = (craftUpgradeItem == null) ? 1 : (craftUpgradeItem.m_quality + 1);
+			if (player.HaveRequirements(craftRecipe, discover: false, qualityLevel)) {
 				CraftAll.TryCraftingMore();
 			} else {
 				CraftAll.StopCraftingAll(false);
@@ -95,8 +98,10 @@ namespace CraftAll.Patches {
 	public static class InventoryGui_OnCraftPressed_Patch {
 		public static void Postfix(InventoryGui __instance) {
 			CraftAll.Debug("[Postfix] InventoryGui.OnCraftPressed()");
-			CraftAll.Debug("recipe? " + __instance.m_craftRecipe);
-			if (__instance.m_craftRecipe == null) CraftAll.StopCraftingAll(false);
+			var traverse = Traverse.Create(__instance);
+			var craftRecipe = traverse.Field("m_craftRecipe").GetValue<Recipe>();
+			CraftAll.Debug("recipe? " + craftRecipe);
+			if (craftRecipe == null) CraftAll.StopCraftingAll(false);
 		}
 	}
 }
