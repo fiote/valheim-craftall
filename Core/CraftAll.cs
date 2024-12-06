@@ -133,14 +133,17 @@ namespace CraftAll {
 				Debug("cant craft more. we're not 'craft-all'ing.");
 				return;
 			}
+			Debug("getting gui");
 			var gui = InventoryGui.instance;
-			var traverse = Traverse.Create(gui);
-			var selectedRecipe = traverse.Field("m_selectedRecipe").GetValue<KeyValuePair<Recipe, ItemDrop.ItemData>>();
-			var selectedVariant = traverse.Field("m_selectedVariant").GetValue<int>();
-			Debug($"m_selectedRecipe={selectedRecipe.Key}");
+			Debug("getting selectedRecipe");
+			var selectedRecipe = gui.m_selectedRecipe;
+			Debug("getting selectedVariant");
+			var selectedVariant = gui.m_selectedRecipe;
+			Debug($"m_selectedRecipe={selectedRecipe.Recipe}");
 			Debug($"m_selectedVariant={selectedVariant}");
-			Debug($"m_craftRecipe.m_craftingStation={selectedRecipe.Key?.m_craftingStation}");
-			traverse.Method("OnCraftPressed").GetValue();
+			Debug($"m_craftRecipe.m_craftingStation={selectedRecipe.Recipe?.m_craftingStation}");
+			gui.OnCraftPressed();
+			Debug("done!");
 		}
 
 		#region LOG
