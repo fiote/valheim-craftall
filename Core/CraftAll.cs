@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Logging;
 using CraftAll.Patches;
 using HarmonyLib;
@@ -72,7 +72,7 @@ namespace CraftAll {
 			var rect = goCraftAll.GetComponent<RectTransform>();
 			var size = rect.sizeDelta;
 			size.x += -150;
-			size.y += -10;
+			size.y += -20;
 			rect.sizeDelta = size;
 
 			Debug("get button");
@@ -85,7 +85,7 @@ namespace CraftAll {
 			if (txtCraftAll != null) {
 				txtCraftAll.text = "Craft All";
 				txtCraftAll.autoSizeTextContainer = false;
-				txtCraftAll.fontSize = 20;
+				txtCraftAll.fontSize = 16;
 			}
 
 			Debug("set tooltip");
