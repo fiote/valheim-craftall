@@ -1,4 +1,4 @@
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
 using CraftAll.Patches;
 using HarmonyLib;
@@ -9,6 +9,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /*
+ * [0.0.5]
+ * - updating mod to current game version (0.219.16 @ The Bog Witch)
+
  * [0.0.4]
  * - updating mod to current game version.
  * 
@@ -24,7 +27,7 @@ using UnityEngine.UI;
  */
 
 namespace CraftAll {
-	[BepInPlugin("fiote.mods.craftall", "CraftAll", "0.0.4")]
+	[BepInPlugin("fiote.mods.craftall", "CraftAll", "0.0.5")]
 
 	public class CraftAll : BaseUnityPlugin {
 
